@@ -1,3 +1,6 @@
+Run main.py in python 3.6.5 
+Need pygame
+
 Problems :
 1 
 when using PyInstaller to package the main.py, the software size is about 667MB which is too huge.
