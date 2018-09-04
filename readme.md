@@ -1,2 +1,2 @@
-1 shoot and save
-2 Îå×ÓÆå gobang
+ï»¿1 shoot and save
+2 äº”å­æ£‹ gobang
