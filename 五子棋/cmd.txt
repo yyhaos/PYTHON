@@ -1,0 +1,2 @@
+C:\Users\HASEE\Desktop\wuziqi>
+pyinstaller main.py
