@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Spyder Editor
-
-This is a temporary script file.
+yyhs 
 """
 from tkinter import *
 from pygame import init
@@ -130,21 +129,21 @@ def call_set():
     root = Tk()
     root.title("Set")
     root.wm_attributes('-topmost',1)
-    root.geometry('200x200')                 #是x 不是*
+    root.geometry('200x200')               
     l1 = Label(root, text="number of raw：")
-    l1.pack()  #这里的side可以赋值为LEFT  RTGHT TOP  BOTTOM
+    l1.pack()  
     xls_text = StringVar()
     xls = Entry(root, textvariable = xls_text)
     xls_text.set(" ")
     xls.pack()
     l2 = Label(root, text="number of line：")
-    l2.pack()  #这里的side可以赋值为LEFT  RTGHT TOP  BOTTOM
+    l2.pack()  
     sheet_text = StringVar()
     sheet = Entry(root, textvariable = sheet_text)
     sheet_text.set(" ")
     sheet.pack()
     l3 = Label(root, text="number of win：")
-    l3.pack()  #这里的side可以赋值为LEFT  RTGHT TOP  BOTTOM
+    l3.pack()  
     loop_text = StringVar()
     loop = Entry(root, textvariable = loop_text)
     loop_text.set(" ")
@@ -153,7 +152,6 @@ def call_set():
         x = xls_text.get()
         s = sheet_text.get()
         l = loop_text.get()
-        #string = str("xls名：%s sheet名：%s 循环次数：%s  " %(x, s, l, ))
         global num_line
         num_line=int(s)
         global num_raw
@@ -173,8 +171,6 @@ def call_set():
         global len_frame
         len_frame=int(len_check*0.55)
         root.destroy()
-        #print("xls名：%s sheet名：%s 循环次数：%s  " %(x, s, l, ))
-        #messagebox.showinfo(title='aaa', message = string)
     Button(root, text="confirm", command = on_click).pack()
     root.mainloop()
 
@@ -190,7 +186,7 @@ while(True):
     maxn_y = len_check*(num_raw-1) + 2*len_frame + len_menu
     
     screen = set_mode((maxn_x,maxn_y))
-    set_caption("Wuziqi    Ver 0.1")
+    set_caption("Wuziqi    Ver 0.2")
     
     background = load('bg.jpg').convert_alpha()
     background = smoothscale(background,(maxn_x,maxn_y))
