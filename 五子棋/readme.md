@@ -5,8 +5,8 @@
 ## 18.9.10
 ### add function ratract and restart and set (set the number of raws or lines and the least number of chessman needed to win).
 ### See example.png and example_2.png for new functions
-https://raw.githubusercontent.com/yyhaos/PYTHON/master/五子棋/Example.PNG
-https://raw.githubusercontent.com/yyhaos/PYTHON/master/五子棋/Example_2.PNG
+![](https://raw.githubusercontent.com/yyhaos/PYTHON/master/五子棋/Example.PNG)
+![](https://raw.githubusercontent.com/yyhaos/PYTHON/master/五子棋/Example_2.PNG)
 # Problems :
 
 ### when using PyInstaller to package the main.py, the software size is about 667MB which is too huge.
