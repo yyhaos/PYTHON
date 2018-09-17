@@ -1,8 +1,9 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Spyder Editor
 yyhs 
 """
+from random import randint
 from tkinter import *
 from pygame import init
 from pygame.display import set_mode
@@ -31,7 +32,9 @@ size_check = 0.925
 size_aim = 0.3
 size_win = 0.8
 size_menu = 0.95
-
+ai = 2  # ai is always the player 2 (play white)
+ai2 = 0 # 0-ai_num=1  1-ai_num=2
+exlen_ai = 22
 
 class myButton(object):
     def __init__(self, upimage, downimage,position):
@@ -148,17 +151,39 @@ def call_set():
     loop = Entry(root, textvariable = loop_text)
     loop_text.set(" ")
     loop.pack()
+    l4 = Label(root, text="number of ai：")
+    l4.pack()  
+    aii_text = StringVar()
+    aii = Entry(root, textvariable = aii_text)
+    aii_text.set(" ")
+    aii.pack()
     def on_click():
         x = xls_text.get()
         s = sheet_text.get()
         l = loop_text.get()
+        a = aii_text.get()
         global num_line
-        num_line=int(s)
+        if s != ' ':
+            num_line=int(s)
         global num_raw
-        num_raw=int(x)
+        if x!=' ':
+            num_raw=int(x)
         global num_win
-        num_win=int(l)
-        if num_raw<=3 :
+        if l!=' ':
+            num_win=int(l)
+        global ai2,ai
+        if a!=' ':
+            ai=int(a)
+            if ai<=0:
+                ai=0
+                ai2=0
+            else :
+                if ai == 2:
+                    ai2=1
+                else:
+                    ai=2
+                    ai2=0
+        if num_raw<=3:
             num_raw=3
         if num_raw>51:
             num_raw=50
@@ -174,6 +199,84 @@ def call_set():
     Button(root, text="confirm", command = on_click).pack()
     root.mainloop()
 
+def ai_check(x,y,player,tar):
+    #print(x,y,player)
+    lens=[0]*10
+    blocked=[0]*10
+    for i in range(8):
+        for k in range(num_win+2):
+            tx = int(x + (k+1)*xx[i])
+            ty = int(y + (k+1)*yy[i])
+            #print(k,tx,ty)
+            if x <=-1 or x >= num_line or y<=-1 or y >= num_raw:
+                blocked[i]+=1
+                break
+            if tx >= 0 and tx <num_line and ty>=0 and ty < num_raw:
+                if mymatrix[ty][tx] == player:
+                    lens[i]+=1
+                    continue
+                if mymatrix[ty][tx] == 0:
+                    break
+                else :
+                    blocked[i]+=1
+                    break
+            else:
+                break
+    for i in range(4):
+        #print(lens[i]+lens[i+4])
+        if lens[i]+lens[i+4]>=tar-1 and tar>=num_win:
+            return player
+        if lens[i]+lens[i+4]>=tar-1 and tar<num_win and blocked[i]!=2:
+            return player
+    return 0
+
+def ai_find(sx,sy):
+    for tt in range(num_win+1):
+        tmp=[]
+        c=0
+        tar=num_win-tt+1
+        for i in range(num_win*2+exlen_ai):
+            for j in range(num_win*2+exlen_ai):
+                x=int(sx+num_win+exlen_ai/2-i)
+                y=int(sy+num_win+exlen_ai/2-j)
+                if x <=-1 or x >= num_line or y<=-1 or y >= num_raw:
+                    continue
+                if mymatrix[y][x]!=0:
+                    continue
+                if tar >= num_win-1:
+                    if ai_check(x,y,ai,tar):
+                        tmp.append((x,y))
+                        c+=1
+                else:
+                    if ai_check(x,y,3-ai,tar):
+                        tmp.append((x,y))
+                        c+=1
+        
+        if c>0:
+            #print( randint(0,c-1))
+            return tmp[randint(0,c-1)]
+        tmp=[]
+        c=0
+        for i in range(num_win*2+exlen_ai):
+            for j in range(num_win*2+exlen_ai):
+                x=int(sx-num_win-exlen_ai/2+i)
+                y=int(sy-num_win-exlen_ai/2+j)
+                if x <=-1 or x >= num_line or y<=-1 or y >= num_raw:
+                    continue
+                if mymatrix[y][x]!=0:
+                    continue
+                if tar >= num_win-1:
+                    if ai_check(x,y,3-ai,tar):
+                        tmp.append((x,y))
+                        c+=1
+                else:
+                    if ai_check(x,y,ai,tar):
+                        tmp.append((x,y))
+                        c+=1
+        if c>0:
+            return tmp[ randint(0,c-1)]
+    return (-1,-1)
+                
 
 while(True):
     init()
@@ -186,7 +289,7 @@ while(True):
     maxn_y = len_check*(num_raw-1) + 2*len_frame + len_menu
     
     screen = set_mode((maxn_x,maxn_y))
-    set_caption("Wuziqi    Ver 0.2")
+    set_caption("Wuziqi    Ver 0.3")
     
     background = load('bg.jpg').convert_alpha()
     background = smoothscale(background,(maxn_x,maxn_y))
@@ -232,8 +335,8 @@ while(True):
     for i in range(num_raw):
         pos_raw = [len_frame+len_check*i for i in range(num_raw)]
         
-    print("pos:",pos_line)
-    print(pos_raw)
+    #print("pos:",pos_line)
+   # print(pos_raw)
         
     color_line = 0,0,0
     width_line = 3
@@ -257,7 +360,42 @@ while(True):
     on=1
     
     reset=0
+    
+    if player == ai and flag==0 and ai2==0: #ai play first
+        sound.play()
+        #sleep(0.1)
+        tx=int(num_raw/2)
+        ty=int(num_line/2)
+        mymatrix[ty][tx] = player
+        premymatrix=premymatrix+[(ty,tx)]
+        cnt+=1
+        #print("premymatrix cnt=",cnt)
+        #print(premymatrix)
+        flag = check(tx,ty,player)
+        player = 3 - player
+    
+    sx=int(num_raw/2)
+    sy=int(num_line/2)
+    #print("ai2=",ai2)
+    if ai2==1:
+        mymatrix[sy][sx] = player
+        player=2
+        tx,ty=(sx,sy)
+
     while True:
+        if player == ai and flag==0 and ai2==0: #ai play
+            sleep(0.2)
+            tx,ty=ai_find(tx,ty)
+            sound.play()
+            #sleep(0.1)
+            mymatrix[ty][tx] = player
+            premymatrix=premymatrix+[(ty,tx)]
+            cnt+=1
+            #print("premymatrix cnt=",cnt)
+            #print(premymatrix)
+            flag = check(tx,ty,player)
+            player = 3 - player
+            mydraw(tx,ty,player)
         
         if reset==1:
             break
@@ -281,6 +419,10 @@ while(True):
         for myevent in get():
             if button_restart.isOver() and myevent.type == MOUSEBUTTONDOWN:
                 initail()
+                if ai2==1:
+                    mymatrix[sy][sx] = 1
+                    player=2
+                    tx,ty=(sx,sy)
                 continue
             if button_retract.isOver() and myevent.type == MOUSEBUTTONDOWN and cnt>0:
                 tem=premymatrix[cnt-1]
@@ -290,6 +432,14 @@ while(True):
                 mymatrix[tem[0]][tem[1]]=0
                 cnt-=1
                 player=3-player
+                if ai==player:
+                    tem=premymatrix[cnt-1]
+                    del premymatrix[cnt-1]
+                    
+                    #print(premymatrix)
+                    mymatrix[tem[0]][tem[1]]=0
+                    cnt-=1
+                    player=3-player
                # premymatrix=premymatrix[1:cnt-1]
                 continue
             if myevent.type == KEYDOWN:
@@ -326,6 +476,21 @@ while(True):
                 #initail()
                 #break
             if reset==1:
+                break
+            if flag==0 and ai2>=1: #2 ai play
+                #print(ai)
+                sleep(0.02)
+                tx,ty=ai_find(tx,ty) 
+                #sound.play()
+                mymatrix[ty][tx] = player
+                premymatrix=premymatrix+[(ty,tx)]
+                cnt+=1
+                #print("premymatrix cnt=",cnt)
+                #print(premymatrix)
+                flag = check(tx,ty,player)
+                player = 3 - player
+                ai=3-ai    
+                mydraw(sx,sy,player)
                 break
             mydraw(tx,ty,player)
     
