@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Spyder Editor
 yyhs 
@@ -33,7 +33,7 @@ size_aim = 0.3
 size_win = 0.8
 size_menu = 0.95
 ai = 2  # ai is always the player 2 (play white)
-ai2 = 0 # 0-ai_num=1  1-ai_num=2
+ai2 = 0 # 0-ai_num=0 1-ai_num=1  2-ai_num=2
 exlen_ai = 22
 
 class myButton(object):
