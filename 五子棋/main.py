@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Spyder Editor
 yyhs 
@@ -22,6 +22,7 @@ from pygame.mixer import Sound
 from sys import exit
 from time import sleep
 
+#print(pygame.version.ver)
 len_check = 35
 len_frame = 20
 num_raw = 15
@@ -33,7 +34,7 @@ size_aim = 0.3
 size_win = 0.8
 size_menu = 0.95
 ai = 2  # ai is always the player 2 (play white)
-ai2 = 0 # 0-ai_num=0 1-ai_num=1  2-ai_num=2
+ai2 = 0 # 0-ai_num=1  1-ai_num=2
 exlen_ai = 22
 
 class myButton(object):
@@ -226,7 +227,19 @@ def ai_check(x,y,player,tar):
         #print(lens[i]+lens[i+4])
         if lens[i]+lens[i+4]>=tar-1 and tar>=num_win:
             return player
+        if lens[i]+lens[i+4]>=tar-1 and tar<num_win and blocked[i]==0:
+            return player
+    for i in range(4):
+        #print(lens[i]+lens[i+4])
+        if lens[i]+lens[i+4]>=tar-1 and tar>=num_win:
+            return player
         if lens[i]+lens[i+4]>=tar-1 and tar<num_win and blocked[i]!=2:
+            return player
+    for i in range(4):
+        #print(lens[i]+lens[i+4])
+        if lens[i]+lens[i+4]>=tar-1 and tar>=num_win:
+            return player
+        if lens[i]+lens[i+4]>=tar-1 and tar<num_win :
             return player
     return 0
 
@@ -235,6 +248,7 @@ def ai_find(sx,sy):
         tmp=[]
         c=0
         tar=num_win-tt+1
+        print(tar)
         for i in range(num_win*2+exlen_ai):
             for j in range(num_win*2+exlen_ai):
                 x=int(sx+num_win+exlen_ai/2-i)
@@ -275,6 +289,7 @@ def ai_find(sx,sy):
                         c+=1
         if c>0:
             return tmp[ randint(0,c-1)]
+    
     return (-1,-1)
                 
 
@@ -291,36 +306,36 @@ while(True):
     screen = set_mode((maxn_x,maxn_y))
     set_caption("Wuziqi    Ver 0.3")
     
-    background = load('bg.jpg').convert_alpha()
+    background = load('resource/bg.jpg').convert_alpha()
     background = smoothscale(background,(maxn_x,maxn_y))
-    bcm = load('bcm.png').convert_alpha()
+    bcm = load('resource/bcm.png').convert_alpha()
     bcm = smoothscale(bcm,(len_cm,len_cm))
-    wcm = load('wcm.png').convert_alpha()
+    wcm = load('resource/wcm.png').convert_alpha()
     wcm = smoothscale(wcm,(len_cm,len_cm))
     
-    aim = load('aim_cm.png').convert_alpha()
+    aim = load('resource/aim_cm.png').convert_alpha()
     aim = smoothscale(aim,(len_aim,len_aim))
     
-    p1w = load('p1win.png').convert_alpha()
+    p1w = load('resource/p1win.png').convert_alpha()
     w,h = p1w.get_size()
     h = int(maxn_x*size_win*h/w)
     w = int(maxn_x*size_win)
     p1w = smoothscale(p1w,(w,h))
     
-    p2w = load('p2win.png').convert_alpha()
+    p2w = load('resource/p2win.png').convert_alpha()
     w,h = p2w.get_size()
     h = int(maxn_x*size_win*h/w)
     w = int(maxn_x*size_win)
     p2w = smoothscale(p2w,(w,h))
     
-    sound = Sound("sound.wav") 
+    sound = Sound('sound.wav') 
     sound.set_volume(1)
-    BGM = Sound("BGM.wav")
+    BGM = Sound('BGM.wav')
     BGM.set_volume(0.3)
     
-    button_restart = myButton('red_cm.png','blue_cm.png', (int(maxn_x/2),int(maxn_y-len_menu/2)))
-    button_set = myButton('red_cm_set.png','blue_cm_set.png', (int(maxn_x/4),int(maxn_y-len_menu/2)))
-    button_retract = myButton('red_cm_retract.png','blue_cm_retract.png', (int(3*maxn_x/4),int(maxn_y-len_menu/2)))
+    button_restart = myButton('resource/red_cm.png','resource/blue_cm.png', (int(maxn_x/2),int(maxn_y-len_menu/2)))
+    button_set = myButton('resource/red_cm_set.png','resource/blue_cm_set.png', (int(maxn_x/4),int(maxn_y-len_menu/2)))
+    button_retract = myButton('resource/red_cm_retract.png','resource/blue_cm_retract.png', (int(3*maxn_x/4),int(maxn_y-len_menu/2)))
     
     pos_win_x = int(maxn_x*(1-size_win)/2)
     #pos_win_x -= int(w/2)
@@ -385,7 +400,10 @@ while(True):
     while True:
         if player == ai and flag==0 and ai2==0: #ai play
             sleep(0.2)
-            tx,ty=ai_find(tx,ty)
+            if cnt==0 :
+                tx,ty=sx,sy
+            else:
+                tx,ty=ai_find(tx,ty)
             sound.play()
             #sleep(0.1)
             mymatrix[ty][tx] = player

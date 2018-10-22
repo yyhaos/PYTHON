@@ -3,6 +3,7 @@
 Spyder Editor
 yyhs 
 """
+from math import floor
 from numpy import *
 from random import randint
 from tkinter import *
@@ -184,14 +185,68 @@ def mydraw(tx,ty,player):
     button_set.render()
     button_retract.render()
     update()
-    
-    
+
+def ok(x,y,num):
+    print(x,y,num)
+    for i in range(9):
+        if mymatrix[y][i]==num and x!=i:
+            return False
+        if mymatrix[i][x]==num and y!=i:
+            return False
+    xx=int (x/3.0)
+    yy=int (y/3.0)
+    #print(xx,yy)
+    xx=xx*3
+    yy=yy*3
+    #print(xx,yy)
+    for i in range(3):
+        for j in range(3):
+            if mymatrix[i+yy][j+xx]==num and (i+yy!=y or j+xx!=x):
+                return False
+    return True
+
+def over():
+    for i in range(9):
+        for j in range(9):
+            if mymatrix[i][j]==0:
+                return False
+    #Finish=[]
+    global now
+    now=0
+    Finish=[[0,0],[1,1],[0,2],[2,1],[3,1],
+           [3,3],[4,4],[3,5],[5,4],[6,4],
+           [5,6],[6,6],[7,6],[8,6],[6,6],[6,7],[7,8],[8,8]]
+    for i in range(9):
+        for j in range(9):
+            mymatrix[i][j]=0%10
+    for i in Finish:
+        sleep(0.15)
+        mymatrix[i[0]][i[1]]=(4)%10
+        mydraw(1,1,1)
+    for i in Finish:
+        sleep(0.1)
+        mymatrix[i[0]][i[1]]=(0)%10
+        mydraw(1,1,1)
+    for th in range(10):
+        if(th==4):
+            continue
+        sleep(0.5)
+        for i in range(9):
+            for j in range(9):
+                mymatrix[i][j]=0
+        for i in Finish:
+            mymatrix[i[0]][i[1]]=(th+1)%10
+        mydraw(1,1,1)
+    global reset
+    reset=1
+    return True
+
 def call_set():
     root = Tk()
     root.title("Set")
     root.wm_attributes('-topmost',1)
     root.geometry('200x200')               
-    l1 = Label(root, text="Degree of difficulty：")
+    l1 = Label(root, text="Degree of difficulty(1~9)：")
     l1.pack()  
     xls_text = StringVar()
     xls = Entry(root, textvariable = xls_text)
@@ -203,8 +258,8 @@ def call_set():
         #print(x)
         if x != ' ':
             hard=float(x)
-        if hard<=1.0:
-            hard=1.0
+        if hard<=2.0:
+            hard=2.0
         if hard>9.5:
             hard=9.5
         hard=hard/10
@@ -225,22 +280,22 @@ while(True):
     screen = set_mode((maxn_x,maxn_y))
     set_caption("shudu    Ver 0.1")
     
-    background = load('resorce/bg.jpg').convert_alpha()
+    background = load('resource/bg.jpg').convert_alpha()
     background = smoothscale(background,(maxn_x,maxn_y))
     
-    button_restart = myButton('resorce/red_cm.png','resorce/blue_cm.png', (int(maxn_x/2),int(maxn_y-len_menu/2)))
-    button_set = myButton('resorce/red_cm_set.png','resorce/blue_cm_set.png', (int(maxn_x/4),int(maxn_y-len_menu/2)))
-    button_retract = myButton('resorce/red_cm_retract.png','resorce/blue_cm_retract.png', (int(3*maxn_x/4),int(maxn_y-len_menu/2)))
+    button_restart = myButton('resource/red_cm.png','resource/blue_cm.png', (int(maxn_x/2),int(maxn_y-len_menu/2)))
+    button_set = myButton('resource/red_cm_set.png','resource/blue_cm_set.png', (int(maxn_x/4),int(maxn_y-len_menu/2)))
+    button_retract = myButton('resource/red_cm_retract.png','resource/blue_cm_retract.png', (int(3*maxn_x/4),int(maxn_y-len_menu/2)))
     
     bt=['1']
     bt_name=['0','1','2','3','4','5','6','7','8','9']
     for i in range (1,10):
         #print(i)
-        bt= bt+[load('resorce/botton'+bt_name[i]+'.png').convert_alpha()]
+        bt= bt+[load('resource/botton'+bt_name[i]+'.png').convert_alpha()]
         bt[i]= smoothscale(bt[i],(len_cm,len_cm))
     bt1 = bt[9]
     
-    sel=load('resorce/select.png').convert_alpha()
+    sel=load('resource/select.png').convert_alpha()
     sel = smoothscale(sel,(len_check,len_check))
     
     #bt2 = load('botton2.png').convert_alpha()
@@ -290,6 +345,7 @@ while(True):
     #print("ai2=",ai2)
 
     while True:
+        
         if reset==1:
             break
         x,y = get_pos()
@@ -312,6 +368,7 @@ while(True):
         #now=0
         
         for myevent in get():
+            over()
             if button_restart.isOver() and myevent.type == MOUSEBUTTONDOWN:
                 initail()
                 if ai2==1:
@@ -342,10 +399,12 @@ while(True):
                     #if(y>=len_frame+len_check*num_line-len_check+5 and y<=len_frame+len_check*num_line+5):
                     #sound.play()
                     #sleep(0.1)
-                    if(now>0):
-                        mymatrix[ty][tx] = now
-                        premymatrix=premymatrix+[(ty,tx)]
-                        cnt+=1
+                    if(now>0 ):
+                        if ok(tx,ty,now):
+                            mymatrix[ty][tx] = now
+                            premymatrix=premymatrix+[(ty,tx)]
+                            cnt+=1
+                        
                     #print("premymatrix cnt=",cnt)
                     #print(premymatrix)
                     #flag = check(tx,ty,player)
