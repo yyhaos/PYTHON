@@ -174,6 +174,7 @@ def call_set():
             num_win=int(l)
         global ai2,ai
         if a!=' ':
+            global ai
             ai=int(a)
             if ai<=0:
                 ai=0
@@ -248,11 +249,14 @@ def ai_find(sx,sy):
         tmp=[]
         c=0
         tar=num_win-tt+1
-        print(tar)
+        #print(tar)
         for i in range(num_win*2+exlen_ai):
             for j in range(num_win*2+exlen_ai):
                 x=int(sx+num_win+exlen_ai/2-i)
                 y=int(sy+num_win+exlen_ai/2-j)
+                #print(x,y)
+                global num_line
+                global num_raw
                 if x <=-1 or x >= num_line or y<=-1 or y >= num_raw:
                     continue
                 if mymatrix[y][x]!=0:
@@ -294,6 +298,7 @@ def ai_find(sx,sy):
                 
 
 while(True):
+    initail()
     init()
     len_cm = int(size_check*len_check)
     len_aim = int(size_aim*len_check)
@@ -370,7 +375,7 @@ while(True):
     
     
     
-    initail()
+    
     BGM.play()
     on=1
     
@@ -398,6 +403,8 @@ while(True):
         tx,ty=(sx,sy)
 
     while True:
+        if reset==1:
+            break
         if player == ai and flag==0 and ai2==0: #ai play
             sleep(0.2)
             if cnt==0 :
@@ -415,8 +422,7 @@ while(True):
             player = 3 - player
             mydraw(tx,ty,player)
         
-        if reset==1:
-            break
+        
         x,y = get_pos()
         
         tx = int((x-len_frame+len_check/2)/(len_check))
@@ -474,17 +480,18 @@ while(True):
                 initail()
                 quit()
                 exit()
-            if myevent.type == MOUSEBUTTONDOWN and mymatrix[ty][tx]==0:
-                sound.play()
-                #sleep(0.1)
-                mymatrix[ty][tx] = player
-                premymatrix=premymatrix+[(ty,tx)]
-                cnt+=1
-                #print("premymatrix cnt=",cnt)
-                #print(premymatrix)
-                flag = check(tx,ty,player)
-                player = 3 - player
-                #print(flag)
+            if tx >=0 and tx < num_line and ty>=0 or ty < num_raw:
+                if myevent.type == MOUSEBUTTONDOWN and mymatrix[ty][tx]==0:
+                    sound.play()
+                    #sleep(0.1)
+                    mymatrix[ty][tx] = player
+                    premymatrix=premymatrix+[(ty,tx)]
+                    cnt+=1
+                    #print("premymatrix cnt=",cnt)
+                    #print(premymatrix)
+                    flag = check(tx,ty,player)
+                    player = 3 - player
+                    #print(flag)
             if button_set.isOver() and myevent.type == MOUSEBUTTONDOWN:
                 call_set()
                 #num_raw=20
