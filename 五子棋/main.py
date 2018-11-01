@@ -36,7 +36,9 @@ size_menu = 0.95
 ai = 2  # ai is always the player 2 (play white)
 ai2 = 0 # 0-ai_num=1  1-ai_num=2
 exlen_ai = 22
-
+xx=[0,-1,-1,-1,0,1,1,1]
+yy=[1,1,0,-1,-1,-1,0,1]
+    
 class myButton(object):
     def __init__(self, upimage, downimage,position):
         self.imageUp = load(upimage).convert_alpha()
@@ -364,8 +366,7 @@ while(True):
     
     #mymatrix = zeros((num_raw,num_line))
     player = 1
-    xx=[0,-1,-1,-1,0,1,1,1]
-    yy=[1,1,0,-1,-1,-1,0,1]
+    
     
     cnt=0   #cnt premymatrix
     ty=0
